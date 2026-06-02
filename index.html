@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بصيرة الذكي | التشغيل الحقيقي للكاميرا</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+</head>
+<body>
+
+    <header>
+        <h1>منصة بصيرة الحقيقية للكاميرا الذكية</h1>
+        <p>اضغط على زر تشغيل الكاميرا، ثم وجه نصاً واضحاً نحو الشاشة واضغط "التقاط وقراءة النص فوراً"</p>
+    </header>
+
+    <main class="container">
+        <div class="camera-box">
+            <video id="webcam" autoplay playsinline width="100%" height="auto"></video>
+            <canvas id="canvas" style="display:none;"></canvas>
+        </div>
+
+        <div class="controls">
+            <button id="startCamBtn" class="btn-main">🎥 تشغيل الكاميرا</button>
+            <button id="captureBtn" class="btn-main scan-btn" disabled>🔍 التقاط وقراءة النص فوراً</button>
+        </div>
+    </main>
+
+    <footer>
+        <div class="status-box">
+            <span id="statusField">في انتظار تشغيل الكاميرا...</span>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
