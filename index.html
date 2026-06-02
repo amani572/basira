@@ -3,34 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بصيرة الذكي | التشغيل الحقيقي للكاميرا</title>
+    <title>بصيرة الذكي | منصة الوصول الشامل</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
 <body>
 
-    <header>
-        <h1>منصة بصيرة الحقيقية للكاميرا الذكية</h1>
-        <p>اضغط على زر تشغيل الكاميرا، ثم وجه نصاً واضحاً نحو الشاشة واضغط "التقاط وقراءة النص فوراً"</p>
-    </header>
-
-    <main class="container">
-        <div class="camera-box">
-            <video id="webcam" autoplay playsinline width="100%" height="auto"></video>
-            <canvas id="canvas" style="display:none;"></canvas>
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fa-solid fa-eye-low-vision logo-icon"></i>
+            <span>بصيرة <span class="badge">PRO</span></span>
         </div>
-
-        <div class="controls">
-            <button id="startCamBtn" class="btn-main">🎥 تشغيل الكاميرا</button>
-            <button id="captureBtn" class="btn-main scan-btn" disabled>🔍 التقاط وقراءة النص فوراً</button>
+        <div class="system-status">
+            <span class="indicator"></span> جاهز للتشغيل
         </div>
-    </main>
+    </nav>
 
-    <footer>
-        <div class="status-box">
-            <span id="statusField">في انتظار تشغيل الكاميرا...</span>
-        </div>
-    </footer>
+    <div class="app-container">
+        <section class="camera-card">
+            <div class="viewfinder-wrapper">
+                <video id="webcam" autoplay playsinline></video>
+                <canvas id="canvas" style="display:none;"></canvas>
+                <div class="scanner-line"></div> </div>
+            
+            <div class="action-area">
+                <button id="startCamBtn" class="btn btn-secondary">
+                    <i class="fa-solid fa-camera"></i> تفعيل الكاميرا
+                </button>
+                <button id="captureBtn" class="btn btn-primary" disabled>
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> التقاط وقراءة النص
+                </button>
+            </div>
+        </section>
+
+        <section class="results-card">
+            <div class="card-header">
+                <i class="fa-solid fa-comment-nodes"></i>
+                <h3>المساعد الصوتي الذكي</h3>
+            </div>
+            <div class="output-box">
+                <p id="statusField">اضغط على "تفعيل الكاميرا" للبدء...</p>
+            </div>
+        </section>
+    </div>
 
     <script src="script.js"></script>
 </body>
