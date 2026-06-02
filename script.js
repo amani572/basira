@@ -1,76 +1,56 @@
-const video = document.getElementById('webcam');
-const canvas = document.getElementById('canvas');
-const startCamBtn = document.getElementById('startCamBtn');
-const captureBtn = document.getElementById('captureBtn');
+const sosBtn = document.getElementById('sosBtn');
+const locationBtn = document.getElementById('locationBtn');
 const statusField = document.getElementById('statusField');
 
-// محرك نطق النصوص
+// محرك النطق الصوتي للمكفوفين
 function speak(text) {
     window.speechSynthesis.cancel();
     let utterance = new SpeechSynthesisUtterance(text);
-    
-    // تحديد لغة النطق بناءً على خيار المستخدم
-    const selectedLang = document.querySelector('input[name="lang"]:checked').value;
-    if (selectedLang === 'ara') {
-        utterance.lang = 'ar-SA';
-    } else {
-        utterance.lang = 'en-US';
-    }
-    
+    utterance.lang = 'ar-SA'; // النطق باللغة العربية
     window.speechSynthesis.speak(utterance);
 }
 
-// تشغيل الكاميرا بدقة عالية تناسب الهواتف
-startCamBtn.addEventListener('click', async () => {
-    statusField.innerText = "جاري الاتصال بالكاميرا...";
-    try {
-        const constraints = {
-            video: {
-                facingMode: "environment", // تشغيل الكاميرا الخلفية للهاتف
-                width: { ideal: 1280 },
-                height: { ideal: 720 }
-            }
-        };
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        video.srcObject = stream;
-        statusField.innerText = "الكاميرا تعمل بنجاح! حدد لغة النص، ثم ثبت الهاتف واضغط التقاط.";
-        speak(document.querySelector('input[name="lang"]:checked').value === 'ara' ? "تم تفعيل الكاميرا" : "Camera activated");
-        captureBtn.disabled = false;
-    } catch (err) {
-        statusField.innerText = "يرجى إعطاء صلاحية الكاميرا للمتصفح.";
-        console.error(err);
+// ترحيب صوتي عند فتح التطبيق أول مرة
+window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        speak("أهلاً بك في تطبيق بصيرَة المطور. لديك زِر الطوارئ في الأعلى، وزِر تحديد الموقع في المنتصف.");
+    }, 1000);
+});
+
+// خدمة "أين أنا الآن" باستخدام الـ GPS الخاص بالهاتف
+locationBtn.addEventListener('click', () => {
+    statusField.innerText = "جاري تحديد موقعك الحالي عبر الأقمار الصناعية...";
+    speak("جاري تحديد موقعك الحالي، يرجى الانتظار ثوانٍ.");
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+            const lat = position.coords.latitude.toFixed(4);
+            const lon = position.coords.longitude.toFixed(4);
+            
+            const message = `تم تحديد موقعك بنجاح. أنت تقف الآن عند خط عرض ${lat} وخط طول ${lon}.`;
+            statusField.innerText = message;
+            speak(message);
+        }, (error) => {
+            statusField.innerText = "فشل تحديد الموقع. يرجى تفعيل الـ GPS في هاتفك.";
+            speak("فشل تحديد الموقع. يرجى التأكد من تفعيل نظام تحديد المواقع في الهاتف وإعطاء الصلاحية.");
+        });
+    } else {
+        statusField.innerText = "متصفحك لا يدعم نظام تحديد المواقع.";
+        speak("عذراً، هذا الهاتف لا يدعم ميزة تحديد المواقع.");
     }
 });
 
-// التقاط ومعالجة دقيقة للصورة
-captureBtn.addEventListener('click', () => {
-    statusField.innerText = "جاري تحليل النص... يرجى الانتظار ثوانٍ...";
+// خدمة الطوارئ SOS
+sosBtn.addEventListener('click', () => {
+    statusField.innerText = "تم تفعيل وضع الطوارئ! جاري إرسال الإشارات...";
+    speak("تحذير، تم تفعيل وضع الطوارئ. جاري تحديد موقعك وإرسال نداء استغاثة لأرقام الطوارئ المسجلة.");
     
-    const selectedLang = document.querySelector('input[name="lang"]:checked').value;
-    speak(selectedLang === 'ara' ? "جاري تحليل النص" : "Analyzing text");
-
-    const context = canvas.getContext('2d');
-    canvas.width = video.videoWidth || 640;
-    canvas.height = video.videoHeight || 480;
-    
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
-
-    // تشغيل محرك الذكاء الاصطناعي بناءً على اللغة المختارة فقط لمنع التداخل والرموز
-    Tesseract.recognize(
-        dataUrl,
-        selectedLang, 
-        { logger: m => console.log(m) }
-    ).then(({ data: { text } }) => {
-        if(!text || text.trim() === "") {
-            statusField.innerText = selectedLang === 'ara' ? "لم أستطع قراءة النص. تأكد من الإضاءة وقرب الكاميرا." : "No clear text found. Please check lighting.";
-            speak(selectedLang === 'ara' ? "لم يتم العثور على نص واضح" : "No text found");
-        } else {
-            statusField.innerText = "النص المقروء: " + text;
-            speak(text); // نطق النص المستخرج فوراً بالصوت الحقيقي
-        }
-    }).catch(error => {
-        statusField.innerText = "حدث خطأ في معالجة الذكاء الاصطناعي.";
-        console.error(error);
-    });
+    // هنا يمكن ربطه مستقبلاً بفتح اتصال مباشر هاتفياً
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+            const lat = position.coords.latitude.toFixed(4);
+            const lon = position.coords.longitude.toFixed(4);
+            speak(`موقع الطوارئ الحالي هو خط عرض ${lat} وخط طول ${lon}. ابقَ في مكانك حتى تصل المساعدة.`);
+        });
+    }
 });
